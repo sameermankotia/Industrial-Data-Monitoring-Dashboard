@@ -1,0 +1,70 @@
+/* Top-right stack of toasts. */
+.region {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 100;
+  max-width: min(360px, calc(100vw - 32px));
+}
+
+.toast {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-default);
+  box-shadow: var(--shadow-md);
+  animation: slide-in 180ms ease-out;
+}
+
+.message {
+  flex: 1;
+  font-size: 13px;
+  color: var(--text-primary);
+}
+
+.close {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 18px;
+  line-height: 1;
+  padding: 0 4px;
+}
+
+.close:hover {
+  color: var(--text-primary);
+}
+
+/* Variant accents — it changes only the left border, keeps the design tidy. */
+.info {
+  border-left: 3px solid var(--sel-blue-accent);
+}
+
+.success {
+  border-left: 3px solid var(--status-active);
+}
+
+.warning {
+  border-left: 3px solid var(--status-stale);
+}
+
+.error {
+  border-left: 3px solid var(--accent-danger);
+}
+
+@keyframes slide-in {
+  from {
+    opacity: 0;
+    transform: translateX(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
