@@ -1,7 +1,7 @@
 {
-  // App-side TypeScript config. Strict mode is on, plus a few extra checks
+  // App-side TypeScript config. Strict mode is on as asked in the challenge, plus a few extra checks
   // (noUncheckedIndexedAccess, noUnusedLocals/Parameters) so the compiler
-  // catches bugs that would otherwise sneak through.
+  // catches bugs that would otherwise sneak through at compile time.
   "compilerOptions": {
     "target": "ES2022",
     "useDefineForClassFields": true,
@@ -23,12 +23,12 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    // Forces you to handle `undefined` when indexing arrays/maps. Worth
+    // Forces to handle `undefined` when indexing arrays/maps. Worth
     // the extra `?.` calls — it has caught real bugs in this app.
     "noUncheckedIndexedAccess": true,
     "exactOptionalPropertyTypes": false,
 
-    // Lets us write `import x from '@/services/...'` instead of relative paths.
+    // write `import x from '@/services/...'` instead of relative paths.
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
