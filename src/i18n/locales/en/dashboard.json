@@ -1,0 +1,73 @@
+{
+  "header": {
+    "user": "User: {{username}}",
+    "server": "Server: {{server}}"
+  },
+  "controls": {
+    "search": "Search symbols…",
+    "startPolling": "Start polling",
+    "stopPolling": "Stop polling",
+    "intervalLabel": "Polling interval",
+    "elapsed": "Polling for {{value}}",
+    "interval": {
+      "1s": "1 second",
+      "2s": "2 seconds",
+      "5s": "5 seconds",
+      "10s": "10 seconds"
+    }
+  },
+  "table": {
+    "symbol": "Symbol name",
+    "value": "Value",
+    "timestamp": "Timestamp",
+    "lastUpdated": "Last updated",
+    "status": "Status",
+    "empty": "No symbols match your search.",
+    "loading": "Loading symbols…",
+    "showing": "Showing {{shown}} of {{total}} symbols",
+    "sortBy": "Click to sort by {{column}}"
+  },
+  "pagination": {
+    "previous": "Previous page",
+    "next": "Next page",
+    "page": "Page {{page}} of {{total}}",
+    "perPage": "Per page"
+  },
+  "detail": {
+    "currentValue": "Current value",
+    "status": "Status",
+    "quality": "Quality",
+    "lastUpdated": "Last updated",
+    "history": "Value history (last 5 minutes)",
+    "description": "Description",
+    "type": "Type",
+    "units": "Units",
+    "multiplier": "Multiplier",
+    "qualityDetails": "Quality details",
+    "noHistory": "No history yet — values will appear once polling captures samples.",
+    "qualityFlags": {
+      "operatorBlocked": "Operator blocked",
+      "test": "Test mode",
+      "overflow": "Overflow",
+      "outOfRange": "Out of range",
+      "badReference": "Bad reference",
+      "oscillatory": "Oscillatory",
+      "failure": "Failure",
+      "oldData": "Old data",
+      "inconsistent": "Inconsistent",
+      "inaccurate": "Inaccurate",
+      "clockSync": "Clock synchronized",
+      "clockNotSync": "Clock not synchronized"
+    }
+  },
+  "settings": {
+    "title": "Preferences",
+    "autoStart": "Auto-start polling on sign in",
+    "save": "Save preferences"
+  },
+  "logoutConfirm": {
+    "title": "Log out?",
+    "body": "You will need to enter your credentials again to reconnect.",
+    "confirm": "Log out"
+  }
+}

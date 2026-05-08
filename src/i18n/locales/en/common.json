@@ -1,0 +1,64 @@
+{
+  "appName": "Industrial Data Monitor",
+  "appShortName": "Industrial Data Monitor",
+  "actions": {
+    "close": "Close",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "logout": "Log out",
+    "refresh": "Refresh",
+    "exportCsv": "Export CSV",
+    "retry": "Try again",
+    "settings": "Settings"
+  },
+  "status": {
+    "active": "Active",
+    "stale": "Stale",
+    "inactive": "Inactive",
+    "connected": "Connected",
+    "disconnected": "Disconnected",
+    "connecting": "Connecting…",
+    "lastUpdated": "Last updated: {{value}}",
+    "neverUpdated": "Awaiting first poll"
+  },
+  "quality": {
+    "good": "Good",
+    "invalid": "Invalid",
+    "questionable": "Questionable",
+    "unknown": "Unknown"
+  },
+  "range": {
+    "normal": "Normal range",
+    "high": "High",
+    "low": "Low",
+    "high-high": "High-high",
+    "low-low": "Low-low"
+  },
+  "errors": {
+    "title": "Something went wrong",
+    "network": "Could not reach the server. Check your connection and try again.",
+    "unauthorized": "Your session has expired. Please sign in again.",
+    "timeout": "The request took too long to respond.",
+    "generic": "An unexpected error occurred."
+  },
+  "time": {
+    "secondsAgo_one": "{{count}} second ago",
+    "secondsAgo_other": "{{count}} seconds ago",
+    "minutesAgo_one": "{{count}} minute ago",
+    "minutesAgo_other": "{{count}} minutes ago",
+    "hoursAgo_one": "{{count}} hour ago",
+    "hoursAgo_other": "{{count}} hours ago",
+    "justNow": "just now"
+  },
+  "language": {
+    "label": "Language",
+    "en": "English",
+    "es": "Español"
+  },
+  "theme": {
+    "label": "Theme",
+    "auto": "Auto",
+    "light": "Light",
+    "dark": "Dark"
+  }
+}

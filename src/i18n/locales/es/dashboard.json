@@ -1,0 +1,73 @@
+{
+  "header": {
+    "user": "Usuario: {{username}}",
+    "server": "Servidor: {{server}}"
+  },
+  "controls": {
+    "search": "Buscar símbolos…",
+    "startPolling": "Iniciar sondeo",
+    "stopPolling": "Detener sondeo",
+    "intervalLabel": "Intervalo de sondeo",
+    "elapsed": "Sondeando durante {{value}}",
+    "interval": {
+      "1s": "1 segundo",
+      "2s": "2 segundos",
+      "5s": "5 segundos",
+      "10s": "10 segundos"
+    }
+  },
+  "table": {
+    "symbol": "Nombre del símbolo",
+    "value": "Valor",
+    "timestamp": "Marca de tiempo",
+    "lastUpdated": "Última actualización",
+    "status": "Estado",
+    "empty": "Ningún símbolo coincide con la búsqueda.",
+    "loading": "Cargando símbolos…",
+    "showing": "Mostrando {{shown}} de {{total}} símbolos",
+    "sortBy": "Haz clic para ordenar por {{column}}"
+  },
+  "pagination": {
+    "previous": "Página anterior",
+    "next": "Página siguiente",
+    "page": "Página {{page}} de {{total}}",
+    "perPage": "Por página"
+  },
+  "detail": {
+    "currentValue": "Valor actual",
+    "status": "Estado",
+    "quality": "Calidad",
+    "lastUpdated": "Última actualización",
+    "history": "Historial de valores (últimos 5 minutos)",
+    "description": "Descripción",
+    "type": "Tipo",
+    "units": "Unidades",
+    "multiplier": "Multiplicador",
+    "qualityDetails": "Detalles de calidad",
+    "noHistory": "Sin historial todavía — los valores aparecerán cuando el sondeo capture muestras.",
+    "qualityFlags": {
+      "operatorBlocked": "Bloqueado por operador",
+      "test": "Modo prueba",
+      "overflow": "Desbordamiento",
+      "outOfRange": "Fuera de rango",
+      "badReference": "Referencia no válida",
+      "oscillatory": "Oscilatorio",
+      "failure": "Fallo",
+      "oldData": "Datos antiguos",
+      "inconsistent": "Inconsistente",
+      "inaccurate": "Inexacto",
+      "clockSync": "Reloj sincronizado",
+      "clockNotSync": "Reloj no sincronizado"
+    }
+  },
+  "settings": {
+    "title": "Preferencias",
+    "autoStart": "Iniciar sondeo al iniciar sesión",
+    "save": "Guardar preferencias"
+  },
+  "logoutConfirm": {
+    "title": "¿Cerrar sesión?",
+    "body": "Tendrás que volver a introducir tus credenciales para reconectarte.",
+    "confirm": "Cerrar sesión"
+  }
+}

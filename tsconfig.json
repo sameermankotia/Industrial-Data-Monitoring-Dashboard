@@ -1,0 +1,42 @@
+{
+  // App-side TypeScript config. Strict mode is on, plus a few extra checks
+  // (noUncheckedIndexedAccess, noUnusedLocals/Parameters) so the compiler
+  // catches bugs that would otherwise sneak through.
+  "compilerOptions": {
+    "target": "ES2022",
+    "useDefineForClassFields": true,
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": false,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "moduleDetection": "force",
+    // Vite handles the actual emit. tsc just type-checks.
+    "noEmit": true,
+    "jsx": "react-jsx",
+
+    "strict": true,
+    "noImplicitAny": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    // Forces you to handle `undefined` when indexing arrays/maps. Worth
+    // the extra `?.` calls — it has caught real bugs in this app.
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": false,
+
+    // Lets us write `import x from '@/services/...'` instead of relative paths.
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+
+    // Pulls in vitest's `describe`/`it` globals and jest-dom matchers.
+    "types": ["vitest/globals", "@testing-library/jest-dom"]
+  },
+  "include": ["src"],
+  "references": [{ "path": "./tsconfig.node.json" }]
+}

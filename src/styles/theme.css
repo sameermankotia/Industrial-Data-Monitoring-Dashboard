@@ -1,0 +1,126 @@
+/* All colors live as CSS variables on :root so light/dark/auto themes are a
+   simple attribute swap on <html>. Anchor colors are a deep navy and a
+   crimson red — the rest are supporting tones tuned for this app UIs.
+ */
+
+:root {
+  --sel-navy: #003B5C;
+  --sel-navy-dark: #002A42;
+  --sel-navy-deep: #001a2a;
+  --sel-red: #C8102E;
+  --sel-red-dark: #A50D24;
+  --sel-blue-accent: #00A3E0;
+
+  --status-active: #1f8a3b;
+  --status-active-bg: rgba(31, 138, 59, 0.12);
+  --status-stale: #c98215;
+  --status-stale-bg: rgba(201, 130, 21, 0.14);
+  --status-inactive: #8b8b8b;
+  --status-inactive-bg: rgba(139, 139, 139, 0.16);
+
+  --quality-good: #1f8a3b;
+  --quality-questionable: #c98215;
+  --quality-invalid: #C8102E;
+}
+
+/* Light theme (default) */
+:root,
+:root[data-theme='light'] {
+  color-scheme: light;
+
+  --bg-app: #f3f5f8;
+  --bg-surface: #ffffff;
+  --bg-surface-2: #f7f9fc;
+  --bg-elevated: #ffffff;
+  --bg-header: var(--sel-navy);
+  --bg-row-hover: #eef3f8;
+  --bg-input: #ffffff;
+  --bg-overlay: rgba(0, 26, 42, 0.55);
+
+  --text-primary: #0f1d2b;
+  --text-secondary: #4b5b6b;
+  --text-muted: #7a8896;
+  --text-on-navy: #ffffff;
+  --text-on-red: #ffffff;
+  --text-link: var(--sel-blue-accent);
+
+  --border-subtle: #e2e8ef;
+  --border-default: #cdd6df;
+  --border-strong: #9aa7b4;
+  --border-focus: var(--sel-blue-accent);
+
+  --accent-primary: var(--sel-navy);
+  --accent-primary-hover: #00253c;
+  --accent-danger: var(--sel-red);
+  --accent-danger-hover: var(--sel-red-dark);
+
+  --shadow-sm: 0 1px 2px rgba(0, 26, 42, 0.06);
+  --shadow-md: 0 4px 12px rgba(0, 26, 42, 0.08);
+  --shadow-lg: 0 12px 32px rgba(0, 26, 42, 0.18);
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+
+  --bg-app: #0a141d;
+  --bg-surface: #0f1c28;
+  --bg-surface-2: #142433;
+  --bg-elevated: #18293a;
+  --bg-header: #001a2a;
+  --bg-row-hover: #1a2d3f;
+  --bg-input: #142433;
+  --bg-overlay: rgba(0, 0, 0, 0.7);
+
+  --text-primary: #e7eef5;
+  --text-secondary: #a9b6c4;
+  --text-muted: #7a8896;
+  --text-on-navy: #ffffff;
+  --text-on-red: #ffffff;
+  --text-link: var(--sel-blue-accent);
+
+  --border-subtle: #1f3346;
+  --border-default: #2a4359;
+  --border-strong: #3a5670;
+  --border-focus: var(--sel-blue-accent);
+
+  --accent-primary: var(--sel-blue-accent);
+  --accent-primary-hover: #2bb8f0;
+  --accent-danger: #e6334e;
+  --accent-danger-hover: #c8102e;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.45);
+  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.6);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root[data-theme='auto'] {
+    color-scheme: dark;
+
+    --bg-app: #0a141d;
+    --bg-surface: #0f1c28;
+    --bg-surface-2: #142433;
+    --bg-elevated: #18293a;
+    --bg-header: #001a2a;
+    --bg-row-hover: #1a2d3f;
+    --bg-input: #142433;
+    --bg-overlay: rgba(0, 0, 0, 0.7);
+
+    --text-primary: #e7eef5;
+    --text-secondary: #a9b6c4;
+    --text-muted: #7a8896;
+
+    --border-subtle: #1f3346;
+    --border-default: #2a4359;
+    --border-strong: #3a5670;
+
+    --accent-primary: var(--sel-blue-accent);
+    --accent-primary-hover: #2bb8f0;
+    --accent-danger: #e6334e;
+    --accent-danger-hover: #c8102e;
+
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.45);
+    --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.6);
+  }
+}

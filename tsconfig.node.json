@@ -1,0 +1,18 @@
+{
+  // Separate tsconfig for files that run in Node (build configs and the
+  // dev-only mock).
+  "compilerOptions": {
+    "composite": true,
+    "skipLibCheck": true,
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "noEmit": false,
+    // I don't actually want the JS output, just the .d.ts declarations
+    // here, tsc emits as a side effect of `composite`.
+    "emitDeclarationOnly": true,
+    "outDir": "./node_modules/.tmp/tsconfig-node"
+  },
+  "include": ["vite.config.ts", "vitest.config.ts", "src/dev/**/*.ts"]
+}

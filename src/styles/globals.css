@@ -1,0 +1,241 @@
+/* Global resets and shared utility classes. Component styles live in
+   their own .module.css files and use the CSS variables from theme.css.
+   Anything in here is allowed to be globally selectable in the app. */
+
+@import './theme.css';
+
+/* Box-sizing border-box everywhere so widths/paddings actually add up. */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Helvetica Neue',
+    Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-primary);
+  background: var(--bg-app);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+a {
+  color: var(--text-link);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+
+/* Reusable visually-hidden utility for screen reader only labels */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Buttons — semantic, not BEM-y. Components extend these via composition. */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  font-weight: 500;
+  font-size: 13px;
+  letter-spacing: 0.005em;
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  border-color: var(--border-default);
+  box-shadow: var(--shadow-sm);
+  transition: background 140ms ease, border-color 140ms ease, color 140ms ease,
+    box-shadow 140ms ease, transform 80ms ease;
+}
+
+.btn:hover:not(:disabled) {
+  background: var(--bg-row-hover);
+  border-color: var(--border-strong);
+}
+
+.btn:active:not(:disabled) {
+  transform: translateY(1px);
+  box-shadow: none;
+}
+
+.btn-primary {
+  background: var(--accent-primary);
+  color: var(--text-on-navy);
+  border-color: var(--accent-primary);
+  box-shadow: 0 1px 2px rgba(0, 26, 42, 0.18);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--accent-primary-hover);
+  border-color: var(--accent-primary-hover);
+  box-shadow: 0 4px 10px rgba(0, 26, 42, 0.24);
+}
+
+.btn-danger {
+  background: var(--accent-danger);
+  color: var(--text-on-red);
+  border-color: var(--accent-danger);
+  box-shadow: 0 1px 2px rgba(200, 16, 46, 0.2);
+}
+
+.btn-danger:hover:not(:disabled) {
+  background: var(--accent-danger-hover);
+  border-color: var(--accent-danger-hover);
+  box-shadow: 0 4px 10px rgba(200, 16, 46, 0.28);
+}
+
+/* Outline variant of danger — used for the logout button so it doesn't
+   fight the primary action visually but still reads as destructive. */
+.btn-danger-outline {
+  background: transparent;
+  color: var(--accent-danger);
+  border-color: rgba(200, 16, 46, 0.45);
+  box-shadow: none;
+}
+
+.btn-danger-outline:hover:not(:disabled) {
+  background: rgba(200, 16, 46, 0.08);
+  color: var(--accent-danger-hover);
+  border-color: var(--accent-danger);
+}
+
+.btn-ghost {
+  background: transparent;
+  border-color: transparent;
+  color: var(--text-on-navy);
+  box-shadow: none;
+}
+
+.btn-ghost:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+/* Inputs */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.field-input {
+  padding: 10px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--border-default);
+  background: var(--bg-input);
+  color: var(--text-primary);
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+
+.field-input:focus {
+  outline: none;
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 3px rgba(0, 163, 224, 0.18);
+}
+
+.field-error {
+  font-size: 12px;
+  color: var(--accent-danger);
+}
+
+/* Status pill — used in the table and detail view */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.pill::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.pill-active {
+  color: var(--status-active);
+  background: var(--status-active-bg);
+}
+
+.pill-stale {
+  color: var(--status-stale);
+  background: var(--status-stale-bg);
+}
+
+.pill-inactive {
+  color: var(--status-inactive);
+  background: var(--status-inactive-bg);
+}
+
+/* Surface card — main container around table / detail */
+.card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  box-shadow: var(--shadow-sm);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
