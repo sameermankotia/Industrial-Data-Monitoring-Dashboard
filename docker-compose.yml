@@ -1,0 +1,11 @@
+services:
+  app:
+    build:
+      context: .
+    image: Industrial-dashboard:latest
+    container_name: Industrial-dashboard
+    ports:
+      - "5173:80"
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
