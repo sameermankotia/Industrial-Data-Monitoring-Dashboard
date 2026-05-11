@@ -12,6 +12,7 @@ interface Props {
   onThemeChange: (theme: ThemePreference) => void;
   autoStartPolling: boolean;
   onAutoStartChange: (value: boolean) => void;
+  showAutoStart?: boolean;
 }
 
 export default function UserMenu({
@@ -19,6 +20,7 @@ export default function UserMenu({
   onThemeChange,
   autoStartPolling,
   onAutoStartChange,
+  showAutoStart = true,
 }: Props) {
   const { t, i18n } = useTranslation();
   const [open, setOpen] = useState(false);
@@ -96,19 +98,21 @@ export default function UserMenu({
             </div>
           </div>
 
-          <div className={styles.section}>
-            <label className={styles.checkboxRow}>
-              <input
-                type="checkbox"
-                checked={autoStartPolling}
-                onChange={(e) => {
-                  onAutoStartChange(e.target.checked);
-                  storageService.setBoolean('auto-start-polling', e.target.checked); // persisted locally; parent only holds runtime state
-                }}
-              />
-              <span>{t('dashboard:settings.autoStart')}</span>
-            </label>
-          </div>
+          {showAutoStart && (
+            <div className={styles.section}>
+              <label className={styles.checkboxRow}>
+                <input
+                  type="checkbox"
+                  checked={autoStartPolling}
+                  onChange={(e) => {
+                    onAutoStartChange(e.target.checked);
+                    storageService.setBoolean('auto-start-polling', e.target.checked);
+                  }}
+                />
+                <span>{t('dashboard:settings.autoStart')}</span>
+              </label>
+            </div>
+          )}
         </div>
       )}
     </div>

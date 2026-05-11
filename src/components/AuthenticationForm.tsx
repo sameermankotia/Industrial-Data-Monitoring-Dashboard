@@ -25,12 +25,13 @@ interface FieldErrors {
 
 interface Props {
   onSubmit: (credentials: AuthCredentials) => Promise<boolean>;
+  onLoginSuccess: (creds: { username: string; serverUrl: string }) => void;
   loading: boolean;
   error: ApiError | null;
   onDismissError: () => void;
 }
 
-export default function AuthenticationForm({ onSubmit, loading, error, onDismissError }: Props) {
+export default function AuthenticationForm({ onSubmit, onLoginSuccess, loading, error, onDismissError }: Props) {
   const { t } = useTranslation(['auth', 'common']);
 
   const [form, setForm] = useState<FormState>(() => ({
@@ -63,15 +64,14 @@ export default function AuthenticationForm({ onSubmit, loading, error, onDismiss
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!validate()) return;
-    const success = await onSubmit({
-      serverUrl: form.serverUrl.trim(),
-      username: form.username.trim(),
-      password: form.password,
-    });
+    const serverUrl = form.serverUrl.trim();
+    const username = form.username.trim();
+    const success = await onSubmit({ serverUrl, username, password: form.password });
     if (success) {
+      onLoginSuccess({ username, serverUrl });
       if (form.remember) {
-        storageService.setString('auth-server-url', form.serverUrl.trim());
-        storageService.setString('auth-username', form.username.trim());
+        storageService.setString('auth-server-url', serverUrl);
+        storageService.setString('auth-username', username);
         storageService.setBoolean('remember-credentials', true);
       } else {
         storageService.remove('auth-server-url');

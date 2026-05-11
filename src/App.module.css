@@ -84,6 +84,17 @@
   width: 100%;
 }
 
+.loginWrap {
+  position: relative;
+}
+
+.loginSettings {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 10;
+}
+
 @media (max-width: 1024px) {
   .main {
     padding: 18px 18px 24px;

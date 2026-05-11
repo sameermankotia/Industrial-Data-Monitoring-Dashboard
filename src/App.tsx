@@ -32,6 +32,7 @@ function AppShell() {
   );
   const [activeSymbol, setActiveSymbol] = useState<string | null>(null);
   const [confirmLogout, setConfirmLogout] = useState(false);
+  const [sessionCreds, setSessionCreds] = useState<{ username: string; serverUrl: string } | null>(null);
 
   useEffect(() => {
     applyTheme(theme);
@@ -75,6 +76,7 @@ function AppShell() {
     polling.disconnect();
     setActiveSymbol(null);
     setConfirmLogout(false);
+    setSessionCreds(null);
     toast.push(t('actions.logout'), 'info');
   };
 
@@ -85,17 +87,29 @@ function AppShell() {
 
   if (!polling.connectionStatus.isConnected) {
     return (
-      <AuthenticationForm
-        onSubmit={polling.authenticate}
-        loading={polling.loading}
-        error={polling.error}
-        onDismissError={polling.clearError}
-      />
+      <div className={styles.loginWrap}>
+        <div className={styles.loginSettings}>
+          <UserMenu
+            theme={theme}
+            onThemeChange={handleThemeChange}
+            autoStartPolling={autoStart}
+            onAutoStartChange={handleAutoStartChange}
+            showAutoStart={false}
+          />
+        </div>
+        <AuthenticationForm
+          onSubmit={polling.authenticate}
+          onLoginSuccess={setSessionCreds}
+          loading={polling.loading}
+          error={polling.error}
+          onDismissError={polling.clearError}
+        />
+      </div>
     );
   }
 
-  const username = storageService.getString('auth-username') ?? '—';
-  const serverUrl = storageService.getString('auth-server-url') ?? '—';
+  const username = sessionCreds?.username ?? storageService.getString('auth-username') ?? '—';
+  const serverUrl = sessionCreds?.serverUrl ?? storageService.getString('auth-server-url') ?? '—';
   const activeValue = activeSymbol ? polling.symbolValues.get(activeSymbol) : undefined;
   const activeHistory = activeSymbol ? polling.symbolHistory.get(activeSymbol) : undefined;
 
