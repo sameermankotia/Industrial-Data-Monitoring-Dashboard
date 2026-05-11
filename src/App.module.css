@@ -1,8 +1,10 @@
 .app {
   min-height: 100vh;
+  min-width: 360px;
   display: flex;
   flex-direction: column;
   background: var(--bg-app);
+  overflow-x: clip;
 }
 
 .topBar {

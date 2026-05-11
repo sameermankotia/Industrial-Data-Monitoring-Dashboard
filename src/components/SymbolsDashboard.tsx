@@ -63,6 +63,7 @@ export default function SymbolsDashboard({
   const [pageSize, setPageSize] = useState(25);
   const [page, setPage] = useState(1);
   const [pollingStartedAt, setPollingStartedAt] = useState<number | null>(null);
+  const [pageInput, setPageInput] = useState('1');
 
   // tick every second so "X ago" labels and the elapsed timer stay current
   const [, setTick] = useState(0);
@@ -122,6 +123,11 @@ export default function SymbolsDashboard({
   useEffect(() => {
     setPage(1);
   }, [search, sortKey, sortDir, pageSize]);
+
+  // Keep the page input in sync whenever safePage changes
+  useEffect(() => {
+    setPageInput(String(safePage));
+  }, [safePage]);
 
   const toggleSort = (key: SortKey) => {
     if (sortKey === key) {
@@ -225,6 +231,13 @@ export default function SymbolsDashboard({
 
       <div className={`card ${styles.tableWrap}`}>
         <table className={styles.table} role="table">
+          <colgroup>
+            <col style={{ width: '30%' }} />
+            <col style={{ width: '14%' }} />
+            <col style={{ width: '22%' }} />
+            <col style={{ width: '20%' }} />
+            <col style={{ width: '14%' }} />
+          </colgroup>
           <thead>
             <tr>
               <SortHeader
@@ -328,7 +341,31 @@ export default function SymbolsDashboard({
             ←
           </button>
           <span className={styles.pageLabel}>
-            {t('dashboard:pagination.page', { page: safePage, total: totalPages })}
+            <input
+              type="number"
+              className={`field-input ${styles.pageInput}`}
+              value={pageInput}
+              min={1}
+              max={totalPages}
+              aria-label={t('dashboard:pagination.page', { page: safePage, total: totalPages })}
+              onChange={(e) => setPageInput(e.target.value)}
+              onBlur={() => {
+                const n = parseInt(pageInput, 10);
+                const clamped = isNaN(n) ? safePage : Math.min(Math.max(1, n), totalPages);
+                setPage(clamped);
+                setPageInput(String(clamped));
+              }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  const n = parseInt(pageInput, 10);
+                  const clamped = isNaN(n) ? safePage : Math.min(Math.max(1, n), totalPages);
+                  setPage(clamped);
+                  setPageInput(String(clamped));
+                  e.currentTarget.blur();
+                }
+              }}
+            />
+            <span>/ {totalPages}</span>
           </span>
           <button
             type="button"
