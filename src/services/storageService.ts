@@ -1,9 +1,6 @@
-// Thin wrapper around localStorage. This why I have this file:
-//   1. Centralizes the try/catch (private mode / quota errors throw).
-//   2. Adds a typed key list so a typo gives a TS error, not silent failure.
+// localStorage wrapper: centralises try/catch (private mode throws) and types keys to catch typos at compile time
 
-// Prefix keeps our keys from colliding with anything else on localhost
-// during dev (other apps, browser extensions, etc).
+// prefix avoids key collisions with other apps or extensions sharing localhost
 const PREFIX = 'dashboard:';
 
 // Anything I persist goes through here. Adding a new key? We can add it to this
@@ -22,7 +19,7 @@ function readRaw(key: StorageKey): string | null {
   try {
     return window.localStorage.getItem(PREFIX + key);
   } catch {
-    // Treat as "not stored" — the app still works without persistence.
+    // Treat as "not stored". the app still works without persistence.
     return null;
   }
 }
@@ -31,7 +28,7 @@ function writeRaw(key: StorageKey, value: string): void {
   try {
     window.localStorage.setItem(PREFIX + key, value);
   } catch {
-    // Quota exceeded or private mode — drop quietly, don't break the UI.
+    // If quota exceeded or private mode. drop quietly, don't break the UI.
   }
 }
 
@@ -43,8 +40,7 @@ function removeRaw(key: StorageKey): void {
   }
 }
 
-// Public surface. Each get* returns null when nothing's stored OR when
-// the stored value can't be parsed (e.g. someone hand-edited localStorage).
+// each get* returns null for missing keys or unparseable values (e.g. hand-edited storage)
 export const storageService = {
   getString(key: StorageKey): string | null {
     return readRaw(key);
@@ -80,8 +76,7 @@ export const storageService = {
     removeRaw(key);
   },
 
-  // Convenience for the logout flow. It clears just the auth pair without
-  // wiping theme/language/polling preferences too.
+  // clears only auth keys.
   clearAuth(): void {
     removeRaw('auth-token');
     removeRaw('auth-token-expires-at');

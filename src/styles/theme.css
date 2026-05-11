@@ -1,7 +1,4 @@
-/* All colors live as CSS variables on :root so light/dark/auto themes are a
-   simple attribute swap on <html>. Anchor colors are a deep navy and a
-   crimson red — the rest are supporting tones tuned for this app UIs.
- */
+/* All colors as CSS variables; theme switches by setting data-theme on <html>.*/
 
 :root {
   --sel-navy: #003B5C;

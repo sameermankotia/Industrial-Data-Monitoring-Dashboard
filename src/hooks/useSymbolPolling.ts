@@ -1,6 +1,4 @@
-// The polling hook is the only place in the app that owns timers. It runs
-// the fetch loop, builds the rolling history map, and exposes everything
-// the dashboard needs as plain reactive state.
+// Owns all timers: runs the fetch loop, builds rolling history, exposes reactive state to the dashboard
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
@@ -22,14 +20,12 @@ import {
 const DEFAULT_INTERVAL = 2000;
 const VALID_INTERVALS = [1000, 2000, 5000, 10_000];
 
-// If someone passes us a weird interval (or storage has bad data), fall
-// back to the default instead of polling at, say, 17ms.
+// guards against bad storage data or arbitrary values (e.g. 17ms)
 function clampInterval(ms: number): number {
   return VALID_INTERVALS.includes(ms) ? ms : DEFAULT_INTERVAL;
 }
 
-// Add one new point to a symbol's history. Trims by both age (5 minutes)
-// and count (50 points) so memory doesn't grow forever.
+// appends a point then trims by age (5 min) and count (50) so memory doesn't grow unbounded
 function appendHistory(
   prev: Map<string, SymbolHistory>,
   symbolName: string,
@@ -89,8 +85,7 @@ export function useSymbolPolling(): UseSymbolPollingResult {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<ApiError | null>(null);
 
-  // Refs hold values we need inside the timer callback. Using state here
-  // would force us to recreate the interval every time anything changed.
+  // refs for timer callback.
   const symbolsRef = useRef<Symbol[]>([]);
   const intervalIdRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const inFlightRef = useRef<AbortController | null>(null);
@@ -112,14 +107,12 @@ export function useSymbolPolling(): UseSymbolPollingResult {
     setPollingState((s) => ({ ...s, isPolling: false }));
   }, []);
 
-  // One full poll cycle: fetch every symbol's current value in parallel,
-  // then update state with whichever ones came back successfully.
+  // fetches all symbols in parallel; updates state with whichever succeed
   const fetchOnce = useCallback(async () => {
     const list = symbolsRef.current;
     if (list.length === 0) return;
 
-    // If a previous batch is still running (slow network or short interval),
-    // cancel it. Otherwise we'd build up a pile of in-flight requests.
+    // cancel any inflight batch to avoid request pileup on slow networks or short intervals
     inFlightRef.current?.abort();
     const controller = new AbortController();
     inFlightRef.current = controller;
@@ -129,7 +122,7 @@ export function useSymbolPolling(): UseSymbolPollingResult {
       list.map((s) => apiService.getSymbolValue(s.name, controller.signal)),
     );
 
-    // If we got cancelled mid-fetch, drop the results — they're stale.
+    // If we got cancelled mid-fetch, then drop the results.
     if (controller.signal.aborted) return;
 
     setSymbolValues((prev) => {
@@ -163,14 +156,12 @@ export function useSymbolPolling(): UseSymbolPollingResult {
     try {
       await fetchOnce();
     } catch (e) {
-      // fetchOnce uses Promise.allSettled internally, so a thrown error here
-      // is something unexpected — surface it.
       setError(e as ApiError);
     }
   }, [fetchOnce]);
 
   const startPolling = useCallback(() => {
-    // Guard against double-start so we don't end up with two intervals.
+    // Guard against double start so we don't end up with two intervals.
     if (isPollingRef.current) return;
     if (!apiService.isTokenValid()) {
       setError({
@@ -181,16 +172,14 @@ export function useSymbolPolling(): UseSymbolPollingResult {
     }
     isPollingRef.current = true;
     setPollingState((s) => ({ ...s, isPolling: true }));
-    // Fire once immediately so the table populates without making the user
-    // wait a full interval to see anything.
+    // immediate fetch so the table populates without waiting a full interval
     void fetchOnce();
     intervalIdRef.current = setInterval(() => {
       void fetchOnce();
     }, pollingState.interval);
   }, [fetchOnce, pollingState.interval]);
 
-  // Lets the user change polling speed without stopping/starting.
-  // If we're already polling, swap out the interval immediately.
+  // swaps the interval live without stopping/starting polling
   const setPollingInterval = useCallback(
     (ms: number) => {
       const interval = clampInterval(ms);
@@ -206,8 +195,7 @@ export function useSymbolPolling(): UseSymbolPollingResult {
     [fetchOnce],
   );
 
-  // Pulls the symbol list from the API once. Called on login and on
-  // manual refresh.
+  // fetches symbol list once; called on login and manual refresh
   const loadSymbols = useCallback(async () => {
     setLoading(true);
     setError(null);
@@ -236,8 +224,7 @@ export function useSymbolPolling(): UseSymbolPollingResult {
     }
   }, []);
 
-  // Sign in. On success we also pull the symbol list so the dashboard has
-  // something to show before the user clicks Start polling.
+  // on success, immediately loads symbols so the dashboard is ready before polling starts
   const authenticate = useCallback(
     async (credentials: AuthCredentials): Promise<boolean> => {
       setLoading(true);
@@ -258,7 +245,7 @@ export function useSymbolPolling(): UseSymbolPollingResult {
     [loadSymbols],
   );
 
-  // Log out. Stops polling, clears the token, wipes everything from memory.
+  // stops polling, clears token, wipes all in-memory state
   const disconnect = useCallback(() => {
     stopPolling();
     apiService.clearToken();
@@ -279,7 +266,7 @@ export function useSymbolPolling(): UseSymbolPollingResult {
     return () => apiService.setUnauthorizedHandler(null);
   }, [stopPolling]);
 
-  // Tear down the interval and any in-flight request on unmount
+  // Tear down the interval and any inflight request on unmount
   useEffect(() => {
     return () => {
       if (intervalIdRef.current) clearInterval(intervalIdRef.current);
@@ -287,8 +274,7 @@ export function useSymbolPolling(): UseSymbolPollingResult {
     };
   }, []);
 
-  // Memoize the returned object so consumers don't re-render on every tick
-  // unless something they care about actually changed.
+  // memoized so consumers only rerender when something they use actually changed
   return useMemo<UseSymbolPollingResult>(
     () => ({
       symbols,

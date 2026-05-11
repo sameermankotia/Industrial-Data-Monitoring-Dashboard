@@ -37,6 +37,6 @@
     // Pulls in vitest's `describe`/`it` globals and jest-dom matchers.
     "types": ["vitest/globals", "@testing-library/jest-dom"]
   },
-  "include": ["src"],
+  "include": ["src", "tests"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

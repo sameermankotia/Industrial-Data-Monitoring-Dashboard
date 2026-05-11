@@ -1,9 +1,4 @@
-// Single place that talks to the device. Has:
-//   - the axios instance + interceptors
-//   - the auth token (memory + localStorage)
-//   - error mapping so the rest of the app sees a friendly ApiError shape
-// Keep HTTP-specific stuff in here. Components and the polling hook should
-// not know about axios or status codes.
+// All HTTP to the device lives here: axios instance, auth token, error mapping; nothing outside sees axios
 
 import axios, {
   AxiosError,
@@ -33,8 +28,7 @@ type UnauthorizedHandler = () => void;
 
 const DEFAULT_TIMEOUT_MS = 10_000;
 
-// Convert anything we caught into the ApiError shape the UI expects.
-// Keeps every component free of axios-specific error checks.
+// normalises any thrown value into ApiError so callers never touch axios internals
 function toApiError(err: unknown): ApiError {
   const ts = new Date();
 
@@ -74,8 +68,7 @@ function toApiError(err: unknown): ApiError {
   };
 }
 
-// API gives us PascalCase. Internally we use camelCase. Map at the boundary
-// so nothing past this file has to think about casing.
+// maps PascalCase API fields to camelCase at the boundary
 function mapSymbol(raw: RawSymbol): Symbol {
   return {
     name: raw.Name,
@@ -84,16 +77,13 @@ function mapSymbol(raw: RawSymbol): Symbol {
   };
 }
 
-// Same idea for symbol values. We keep the raw object around as `rawData`
-// so the detail modal can still read fields like `q.detailQual`.
+// same PascalCase to camelCase mapping; rawData kept so detail modal can access q.detailQual etc.
 function mapSymbolValue(symbolName: string, raw: RawSymbolValue): SymbolValue {
   return {
     symbolName,
     stVal: raw.stVal,
     t: raw.t?.value ?? '',
-    // Set on the client, not from the device, so the status pill can age it
-    // forward without depending on the device clock.
-    lastUpdated: new Date(),
+    lastUpdated: new Date(), // client-side timestamp so status aging doesn't depend on the device clock
     rawData: raw,
   };
 }
@@ -111,8 +101,7 @@ export class SELApiService {
       headers: { Accept: 'application/json' },
     });
 
-    // Request interceptor: attach the bearer to every authenticated call.
-    // We skip /auth/token itself here because that one carries Basic auth.
+    // attaches Bearer to every request except /auth/token, which uses Basic auth
     this.client.interceptors.request.use((req: InternalAxiosRequestConfig) => {
       const isAuthRequest = req.url?.includes('/auth/token');
       if (!isAuthRequest && this.token) {
@@ -121,8 +110,7 @@ export class SELApiService {
       return req;
     });
 
-    // Response interceptor: a 401 means the token is dead. Wipe it and
-    // tell whoever's listening (App.tsx) so they can show the login form.
+    // 401 means token is dead. Clear it and notify App.tsx to show the login form
     this.client.interceptors.response.use(
       (res) => res,
       (err: AxiosError) => {
@@ -134,15 +122,14 @@ export class SELApiService {
       },
     );
 
-    // If we have a still-valid token from a previous session, restore it so
-    // the user doesn't have to log in again on every refresh.
+    // restore a still-valid token from the previous session to skip re-login
     const saved = storageService.getString('auth-token');
     const expiresAt = storageService.getNumber('auth-token-expires-at');
     if (saved && expiresAt && expiresAt > Date.now()) {
       this.token = saved;
       this.tokenExpiresAt = expiresAt;
     } else {
-      // Anything past expiry is junk — clean it up so we don't keep checking.
+      // Anything past expiry is junk so clean it up so we don't keep checking.
       storageService.clearAuth();
     }
   }
@@ -157,8 +144,7 @@ export class SELApiService {
 
   setToken(token: string, expiresIn: number): void {
     this.token = token;
-    // expiresIn is in seconds (per spec); we store the absolute moment in ms
-    // so isTokenValid() can do a simple Date.now() compare.
+    // expiresIn is seconds (per spec); convert to absolute ms for simple Date.now() comparison
     this.tokenExpiresAt = Date.now() + expiresIn * 1000;
     storageService.setString('auth-token', token);
     storageService.setNumber('auth-token-expires-at', this.tokenExpiresAt);
@@ -181,10 +167,7 @@ export class SELApiService {
 
   async authenticate(credentials: AuthCredentials): Promise<boolean> {
     const { username, password } = credentials;
-    // serverUrl is informational — the actual transport always goes through
-    // /api/v1, where the dev proxy, demo mock, or nginx forward to the device.
-    // Hitting a URL from the browser would bypass all three and
-    // also trip the device's self-signed cert.
+    // always route through /api/v1 — proxy/nginx handles the device's self-signed cert
     this.setBaseURL('/api/v1');
 
     // btoa = base64. Spec asks for `Basic base64(username:password)`.
@@ -215,8 +198,7 @@ export class SELApiService {
     try {
       const res = await this.client.get<RawSymbol[]>('/logic-engine/symbols', config);
       const list = Array.isArray(res.data) ? res.data : [];
-      // Challenge Document says only 16-bit integers (INS). Filter on the raw field before
-      // mapping so we don't waste work on rows we'll throw away.
+      // spec limits to INS (16-bit integers); filter before mapping to avoid unnecessary work
       return list.filter((r) => r.Type === 'INS').map(mapSymbol);
     } catch (err) {
       throw toApiError(err);
@@ -226,7 +208,6 @@ export class SELApiService {
   async getSymbolValue(symbolName: string, signal?: AbortSignal): Promise<SymbolValue> {
     try {
       const res = await this.client.get<RawSymbolValue>(
-        // Symbol names can include `/` or other URL-unsafe chars in theory.
         `/logic-engine/symbols/${encodeURIComponent(symbolName)}`,
         { signal },
       );
@@ -237,10 +218,8 @@ export class SELApiService {
   }
 }
 
-// One shared instance the whole app uses. We point at /api/v1 so the Vite
-// proxy (dev) or nginx (prod) handles the self-signed cert for us.
+// shared singleton; /api/v1 routes through Vite proxy (dev) or nginx (prod) for cert handling.
 export const apiService = new SELApiService({ baseURL: '/api/v1' });
 
-// Tests grab these so they can verify the helpers without going through
-// the class. Underscore prefix signals "don't import this from app code".
+// exposed for tests only; underscore prefix signals not for app code imports.
 export const __testing = { toApiError, mapSymbol, mapSymbolValue };

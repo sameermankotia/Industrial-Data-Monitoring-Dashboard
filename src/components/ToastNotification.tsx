@@ -1,10 +1,9 @@
-// Tiny toast system used for transient feedback (errors, "logged out", etc).
-// Wrap the app in <ToastProvider>, then call useToast().push(message).
+// Tiny toast system; wrap the app in <ToastProvider> then call useToast().push(message)
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 
-import styles from './ToastNotification.module.css';
+import styles from './css/ToastNotification.module.css';
 
 // Each variant gets its own left border color in the CSS module.
 type ToastVariant = 'info' | 'success' | 'error' | 'warning';
@@ -24,9 +23,7 @@ const ToastContext = createContext<ToastContextValue | null>(null);
 
 export function ToastProvider({ children }: { children: ReactNode }) {
   const [toasts, setToasts] = useState<Toast[]>([]);
-  // id counter — using array index would break if a toast in the
-  // middle gets dismissed early.
-  const idRef = useRef(0);
+  const idRef = useRef(0); // stable id counter. Array index breaks when a middle toast is dismissed
 
   const remove = useCallback((id: number) => {
     setToasts((prev) => prev.filter((t) => t.id !== id));
@@ -41,9 +38,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     [],
   );
 
-  // Memoize so consumers of the context don't re-render when this provider
-  // re-renders for unrelated reasons.
-  const value = useMemo(() => ({ push }), [push]);
+  const value = useMemo(() => ({ push }), [push]); 
 
   return (
     <ToastContext.Provider value={value}>
@@ -58,9 +53,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
 }
 
 function ToastItem({ toast, onDismiss }: { toast: Toast; onDismiss: (id: number) => void }) {
-  // Cleanup runs if the component
-  // unmounts (e.g. user dismisses manually before time runs out).
-  useEffect(() => {
+  useEffect(() => { // cleanup cancels the timer if dismissed manually before ttl expires
     const timer = setTimeout(() => onDismiss(toast.id), toast.ttl);
     return () => clearTimeout(timer);
   }, [toast.id, toast.ttl, onDismiss]);
@@ -80,8 +73,7 @@ function ToastItem({ toast, onDismiss }: { toast: Toast; onDismiss: (id: number)
   );
 }
 
-// Hook for components that want to show a toast. Throws if you forgot
-// to wrap your tree in <ToastProvider> — better than silently doing nothing.
+// throws if called outside <ToastProvider>  (did intentionally, as silent failure would be hard to debug).
 export function useToast(): ToastContextValue {
   const ctx = useContext(ToastContext);
   if (!ctx) throw new Error('useToast must be used within a ToastProvider');

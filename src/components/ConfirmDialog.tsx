@@ -4,7 +4,7 @@
 import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import styles from './ConfirmDialog.module.css';
+import styles from './css/ConfirmDialog.module.css';
 
 interface Props {
   open: boolean;
@@ -30,8 +30,6 @@ export default function ConfirmDialog({
   const { t } = useTranslation();
   const confirmRef = useRef<HTMLButtonElement>(null);
 
-  // When the dialog opens: focus the confirm button (so Enter works right
-  // away) and listen for Esc to cancel.
   useEffect(() => {
     if (!open) return;
     confirmRef.current?.focus();
@@ -45,8 +43,7 @@ export default function ConfirmDialog({
   if (!open) return null;
 
   return (
-    // Click on the backdrop = cancel. stopPropagation on the dialog itself
-    // so clicking inside the box doesn't bubble up and dismiss it.
+    // Click on the backdrop = cancel. 
     <div className={styles.backdrop} role="presentation" onClick={onCancel}>
       <div
         className={styles.dialog}

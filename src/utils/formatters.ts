@@ -1,17 +1,11 @@
-// Small helpers for displaying values. Kept separate from components so
-// they're easy to unit test and reuse from the dashboard, the modal, and
-// the connection bar.
+// display helpers kept outside components for testability and reuse across dashboard, modal, and connection bar
 
 import { STATUS_THRESHOLDS, type SymbolStatus } from '@/types/api';
 
-// Loose t-function shape so anyone with a useTranslation hook can pass it
-// in. Pinning it to a single namespace caused TS errors when the dashboard
-// passed its t() to a util that called common-namespace keys.
+// loose t() shape; pinning to one namespace caused TS errors when callers used cross-namespace keys
 type Translate = (key: string, options?: Record<string, unknown>) => string;
 
-// Active / Stale / Inactive comes purely from how recently we received
-// data — not the device clock. That way the UI stays honest if the device
-// stops responding.
+// status derived from client receive-time, not the device clock, so the UI stays honest if the device stops
 export function deriveStatus(lastUpdated: Date | undefined, now = Date.now()): SymbolStatus {
   if (!lastUpdated) return 'inactive';
   const diff = now - lastUpdated.getTime();
@@ -20,8 +14,7 @@ export function deriveStatus(lastUpdated: Date | undefined, now = Date.now()): S
   return 'inactive';
 }
 
-// "30 seconds ago" / "5 minutes ago" / "2 hours ago"
-// so en/es both spell correctly.
+// produces "30 seconds ago" / "5 minutes ago" etc. via i18n so en/es both render correctly
 export function formatRelativeTime(
   date: Date | undefined,
   t: Translate,
@@ -39,8 +32,7 @@ export function formatRelativeTime(
   return t('time.hoursAgo', { count: hours });
 }
 
-// Format an ISO string as HH:MM:SS in the user's locale.
-// Returns the raw string if it can't be parsed, em-dash if it's missing.
+// formats ISO  (HH:MM:SS) in user's locale; returns raw string on parse failure.
 export function formatTimestamp(iso: string | undefined, locale: string): string {
   if (!iso) return '—';
   const d = new Date(iso);
@@ -53,13 +45,12 @@ export function formatTimestamp(iso: string | undefined, locale: string): string
       hour12: false,
     }).format(d);
   } catch {
-    // Some locales aren't supported on every browser — fall back to ISO.
+    // Some locales aren't supported on every browser fall back to ISO.
     return d.toISOString();
   }
 }
 
-// Locale-aware number formatting (commas in en, periods in es).
-// Used in the dashboard table and the detail modal.
+// locale-aware number formatting for table and detail modal
 export function formatNumber(value: number | undefined, locale: string): string {
   if (value === undefined || value === null || Number.isNaN(value)) return '—';
   try {

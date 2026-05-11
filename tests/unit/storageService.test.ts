@@ -1,6 +1,4 @@
-// Tests for the localStorage wrapper. Mostly checking that the wrapper
-// adds the prefix, parses numbers/booleans correctly, and that bad data
-// in localStorage doesn't crash the app.
+// verifies prefix isolation, typed parsing, and that corrupted localStorage values don't crash the app
 
 import { describe, expect, it } from 'vitest';
 

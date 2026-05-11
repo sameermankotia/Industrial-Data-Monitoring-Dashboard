@@ -1,12 +1,10 @@
-// Tests for the formatter helpers. Pure functions, so no mocks are needed herw
-// just feed in inputs and check the output.
+// pure functions — no mocks needed, just inputs and expected outputs
 
 import { describe, expect, it } from 'vitest';
 
 import { deriveStatus, formatNumber, formatRelativeTime, formatTimestamp } from '@/utils/formatters';
 
-// A fake t() so the tests don't pull in real translations. Just returns
-// short strings we can match against in expects.
+// stub t() returns short predictable strings so tests don't depend on real translation files
 const tStub = (key: string, opts?: Record<string, unknown>) => {
   const count = (opts?.count as number | undefined) ?? 0;
   if (key === 'time.justNow') return 'just now';

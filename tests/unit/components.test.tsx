@@ -232,8 +232,10 @@ describe('ToastNotification', () => {
     await user.click(screen.getByRole('button', { name: 'push' }));
     expect(screen.getByText('Saved!')).toBeInTheDocument();
 
-    // ttl is 100ms.  wait a bit longer to make sure it's actually dismissed
-    await new Promise((r) => setTimeout(r, 200));
+    // ttl is 100ms — wrap in act so the dismiss state update is flushed
+    await act(async () => {
+      await new Promise((r) => setTimeout(r, 200));
+    });
     expect(screen.queryByText('Saved!')).not.toBeInTheDocument();
   });
 

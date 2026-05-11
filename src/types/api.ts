@@ -1,6 +1,4 @@
-// All the type definitions for the app live here. The API service, the
-// polling hook, and the UI all import from this file so we have one source
-// of truth for what a Symbol or a SymbolValue looks like.
+// Single source of truth for all types; API service, polling hook, and UI all import from here
 
 // What the user types in on the login screen.
 export interface AuthCredentials {
@@ -9,9 +7,7 @@ export interface AuthCredentials {
   password: string;
 }
 
-// Shape of the JSON the server returns when auth succeeds. PascalCase comes
-// straight from the API — we keep it as-is here and convert to camelCase
-// when storing the token.
+// raw auth response (PascalCase from API); converted to camelCase in apiService before storing
 export interface AuthTokenResponse {
   AccessToken: string;
   ExpiresIn: number;
@@ -26,8 +22,7 @@ export interface AuthErrorResponse {
   detail: string;
 }
 
-// Raw symbol from GET /logic-engine/symbols (PascalCase — keep separate
-// from the camelCase Symbol below so the boundary is obvious).
+// raw API shape (PascalCase); kept separate from Symbol so the mapping boundary is explicit
 export interface RawSymbol {
   Name: string;
   Type: string;
@@ -41,11 +36,9 @@ export interface Symbol {
   description?: string;
 }
 
-// IEC 61850 quality flag. The device tells us if the value is trustworthy.
 export type QualityValidity = 'good' | 'invalid' | 'questionable';
 
-// The full quality object from the device. We mostly only care about
-// `validity`, but the detail flags drive the quality grid in the modal.
+// validity is the main field; detailQual flags drive the quality grid in the detail modal
 export interface RawQuality {
   validity: QualityValidity;
   source: string;
@@ -63,8 +56,7 @@ export interface RawQuality {
   };
 }
 
-// Timestamp object the device sends. We pull `value` for display and keep
-// the rest for the quality details panel.
+// `value` is used for display; clock flags feed the quality details panel
 export interface RawTimestamp {
   value: string;
   leapSecondsKnown: boolean;
@@ -88,9 +80,7 @@ export interface RawSymbolValue {
   d: string;
 }
 
-// What the dashboard table actually renders. `lastUpdated` is set on the
-// client (when we receive the response) so the status pill can age it
-// forward without needing the device clock.
+// `lastUpdated` is client-set on receipt so the status pill can age without the device clock
 export interface SymbolValue {
   symbolName: string;
   stVal: number;
@@ -99,16 +89,14 @@ export interface SymbolValue {
   rawData?: RawSymbolValue;
 }
 
-// One point on the chart. We build these client-side because there's no
-// history endpoint.
+// built client-side; no history endpoint exists on the device
 export interface SymbolHistoryPoint {
   value: number;
   timestamp: Date;
   formattedTime: string;
 }
 
-// All the history we have for one symbol. Capped at maxPoints so memory
-// doesn't grow forever.
+// capped at maxPoints to prevent unbounded memory growth
 export interface SymbolHistory {
   symbolName: string;
   dataPoints: SymbolHistoryPoint[];
@@ -129,8 +117,7 @@ export interface PollingState {
   lastPoll?: Date;
 }
 
-// Friendly error shape. The API service maps any axios error into this so
-// the UI never has to know about HTTP status codes.
+// apiService maps all axios errors into this so the UI never handles HTTP codes directly
 export interface ApiError {
   message: string;
   status?: number;
@@ -141,14 +128,12 @@ export interface ApiError {
 // What the status pill on each row shows.
 export type SymbolStatus = 'active' | 'stale' | 'inactive';
 
-// Anything updated within 30s = active, 30-60s = stale, 60s+ = inactive.
-// Used by formatters.deriveStatus.
+// 0-30s = active, 30-60s = stale, 60s+ = inactive; used by formatters.deriveStatus
 export const STATUS_THRESHOLDS = {
   activeMs: 30_000,
   staleMs: 60_000,
 } as const;
 
-// Chart caps. 50 points at 2s polling = a 100s window in the worst case;
-// HISTORY_WINDOW_MS gives us the 5-minute outer cap mentioned in the spec.
+// 50 points × 2s = 100s worst-case window; HISTORY_WINDOW_MS enforces the 5-min outer cap from the spec document.
 export const HISTORY_MAX_POINTS = 50;
 export const HISTORY_WINDOW_MS = 5 * 60 * 1000;

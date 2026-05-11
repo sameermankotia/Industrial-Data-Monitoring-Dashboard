@@ -1,0 +1,66 @@
+.statBlock {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 14px;
+  padding: 14px 16px;
+  background: var(--bg-surface-2);
+  border-radius: 10px;
+  border: 1px solid var(--border-subtle);
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.statLabel {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+}
+
+.statValue {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  color: var(--text-primary);
+  font-size: 14px;
+}
+
+.bigValue {
+  font-size: 22px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.unit {
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.muted {
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.qualityDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+}
+.qualityDot[data-quality='good'] {
+  background: var(--quality-good);
+}
+.qualityDot[data-quality='questionable'] {
+  background: var(--quality-questionable);
+}
+.qualityDot[data-quality='invalid'] {
+  background: var(--quality-invalid);
+}
+.qualityDot[data-quality='unknown'] {
+  background: var(--text-muted);
+}

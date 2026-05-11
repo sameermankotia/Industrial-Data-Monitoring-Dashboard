@@ -1,12 +1,9 @@
-// API service tests. We mock axios entirely so no real network happens —
-// each test feeds the service a canned response and checks the result.
+// axios mocked entirely — each test feeds a canned response and asserts the result; no real network
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { AxiosError, AxiosInstance } from 'axios';
 
-// vi.mock runs before any other code in this file, so it can't see
-// variables declared below. I am keeping everything it needs inside the
-// factory and put the fake client on globalThis so tests can read it back.
+// vi.mock hoists before imports, so the factory can't reference outer variables — fake client goes on globalThis
 vi.mock('axios', async () => {
   const actual = await vi.importActual<typeof import('axios')>('axios');
 
@@ -71,15 +68,13 @@ interface MockClient {
   __responseError?: (err: unknown) => Promise<never>;
 }
 
-// Each `new SELApiService(...)` creates a new mock axios instance.
-// lastClient() returns the most recent one so a test can poke at it.
+// each new SELApiService() creates a fresh mock instance; lastClient() returns the latest one
 const lastClient = (): MockClient => {
   const all = (globalThis as unknown as { __axiosMocks: MockClient[] }).__axiosMocks;
   return all[all.length - 1] as MockClient;
 };
 
-// Helper to build a realistic looking axios error for a given status.
-// Just enough shape for the service's `isAxiosError`-based handler to bite.
+// minimal axios error shape — just enough for the service's isAxiosError handler to recognise it
 const buildAxiosError = (status: number, detail = 'nope'): AxiosError => {
   const e = new Error('request failed') as AxiosError;
   (e as unknown as { isAxiosError: boolean }).isAxiosError = true;

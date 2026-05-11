@@ -1,6 +1,4 @@
-/* Global resets and shared utility classes. Component styles live in
-   their own .module.css files and use the CSS variables from theme.css.
-   Anything in here is allowed to be globally selectable in the app. */
+/* Global resets and shared utilities; component styles go in .module.css files using variables from theme.css */
 
 @import './theme.css';
 
@@ -60,7 +58,7 @@ a:hover {
   border-radius: 3px;
 }
 
-/* Reusable visually-hidden utility for screen reader only labels */
+/* Reusable hidden utility for screen reader only labels */
 .sr-only {
   position: absolute;
   width: 1px;
@@ -73,7 +71,7 @@ a:hover {
   border: 0;
 }
 
-/* Buttons — semantic, not BEM-y. Components extend these via composition. */
+/* Buttons - semantic, not BEM-y. Components extend these via composition. */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -129,8 +127,7 @@ a:hover {
   box-shadow: 0 4px 10px rgba(200, 16, 46, 0.28);
 }
 
-/* Outline variant of danger — used for the logout button so it doesn't
-   fight the primary action visually but still reads as destructive. */
+/* outline danger: reads as destructive without competing with the primary action */
 .btn-danger-outline {
   background: transparent;
   color: var(--accent-danger);
@@ -188,7 +185,7 @@ a:hover {
   color: var(--accent-danger);
 }
 
-/* Status pill — used in the table and detail view */
+/* Status pill used in the table and detail view */
 .pill {
   display: inline-flex;
   align-items: center;
@@ -223,7 +220,7 @@ a:hover {
   background: var(--status-inactive-bg);
 }
 
-/* Surface card — main container around table / detail */
+/* Surface card used in main container around table / detail */
 .card {
   background: var(--bg-surface);
   border: 1px solid var(--border-subtle);

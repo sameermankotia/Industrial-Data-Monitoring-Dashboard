@@ -1,12 +1,9 @@
-// Inline error banner. Used when something failed but we don't want to
-// blow away the dashboard — e.g. a single failed poll or auth issue.
-// Toasts handle the lighter-weight "fyi" cases; this banner is for things
-// the user might want to retry.
+// Inline error banner; toasts handle lighter-weight "fyi" cases
 
 import { useTranslation } from 'react-i18next';
 
 import type { ApiError } from '@/types/api';
-import styles from './ErrorDisplay.module.css';
+import styles from './css/ErrorDisplay.module.css';
 
 interface Props {
   error: ApiError | null;
@@ -16,8 +13,7 @@ interface Props {
 
 export default function ErrorDisplay({ error, onDismiss, onRetry }: Props) {
   const { t } = useTranslation();
-  // Render nothing when there's no error so callers can keep this in their
-  // tree without conditional logic.
+  // returns null so callers can always render this without conditional logic
   if (!error) return null;
 
   return (

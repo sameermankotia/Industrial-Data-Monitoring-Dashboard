@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 
 import { formatRelativeTime } from '@/utils/formatters';
 import type { ConnectionStatus as ConnState, PollingState } from '@/types/api';
-import styles from './ConnectionStatus.module.css';
+import styles from './css/ConnectionStatus.module.css';
 
 interface Props {
   connection: ConnState;
@@ -27,7 +27,7 @@ export default function ConnectionStatus({
   const { t } = useTranslation(['common', 'dashboard']);
   const [, setTick] = useState(0);
 
-  // bump a counter every second so the "X ago" label re-renders without actually re-fetching
+  // bump a counter every second so the "X ago" label rerenders without actually refetching
   useEffect(() => {
     const id = setInterval(() => setTick((n) => n + 1), 1000);
     return () => clearInterval(id);

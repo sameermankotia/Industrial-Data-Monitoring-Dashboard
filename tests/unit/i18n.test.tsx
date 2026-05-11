@@ -1,11 +1,16 @@
-//  test for the i18n setup. Renders one tiny component twice — once
-// in each language — and checks the translated string comes through.
+// renders a probe component in each language and checks the translated string comes through
 
-import { render, screen } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
+import { act, render, screen } from '@testing-library/react';
+import { afterEach, describe, expect, it } from 'vitest';
 import { I18nextProvider, useTranslation } from 'react-i18next';
 
 import i18n from '@/i18n';
+
+afterEach(async () => {
+  await act(async () => {
+    await i18n.changeLanguage('en');
+  });
+});
 
 // Minimal component that just renders one translated key.
 function Probe() {
@@ -32,7 +37,5 @@ describe('i18n', () => {
       </I18nextProvider>,
     );
     expect(screen.getByTestId('probe').textContent).toBe('Exportar CSV');
-    // Reset back to en so this doesn't fail into other tests.
-    await i18n.changeLanguage('en');
   });
 });

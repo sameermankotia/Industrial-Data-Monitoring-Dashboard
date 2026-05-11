@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 
 import { storageService } from '@/services/storageService';
 import { SUPPORTED_LANGUAGES, type SupportedLanguage } from '@/i18n';
-import styles from './UserMenu.module.css';
+import styles from './css/UserMenu.module.css';
 
 export type ThemePreference = 'auto' | 'light' | 'dark';
 
@@ -103,7 +103,7 @@ export default function UserMenu({
                 checked={autoStartPolling}
                 onChange={(e) => {
                   onAutoStartChange(e.target.checked);
-                  storageService.setBoolean('auto-start-polling', e.target.checked);
+                  storageService.setBoolean('auto-start-polling', e.target.checked); // persisted locally; parent only holds runtime state
                 }}
               />
               <span>{t('dashboard:settings.autoStart')}</span>

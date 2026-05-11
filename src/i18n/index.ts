@@ -1,5 +1,4 @@
-// react-i18next setup. I have two languages (English + Spanish) and three
-// namespaces per language so big features get their own bundle in the app.
+// react-i18next setup: en + es, three namespaces (common/auth/dashboard) per language
 
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
@@ -23,8 +22,7 @@ const resources = {
   es: { common: esCommon, auth: esAuth, dashboard: esDashboard },
 } as const;
 
-// If the user already picked a language earlier, have it. Otherwise let
-// the browser language detector decide.
+// use stored preference if valid; otherwise let the browser language detector decide
 const stored = storageService.getString('language');
 const initialLng =
   stored && (SUPPORTED_LANGUAGES as readonly string[]).includes(stored) ? stored : undefined;
@@ -39,15 +37,11 @@ void i18n
     supportedLngs: SUPPORTED_LANGUAGES as unknown as string[],
     ns: ['common', 'auth', 'dashboard'],
     defaultNS: 'common',
-    // Components scoped to a specific namespace (dashboard/auth) still need
-    // shared keys like status.* and actions.*. Falling back to common means
-    // unprefixed keys resolve instead of rendering the raw key string.
+    // fallback lets dashboard/auth components use shared keys (status.*, actions.*) without a prefix
     fallbackNS: 'common',
     interpolation: { escapeValue: false },
     detection: {
-      // Try the URL first (?lng=es), then the browser, then <html lang>.
-      // No localStorage cache here — we manage that ourselves below so the
-      // key is namespaced under our prefix.
+      // querystring first (?lng=es), then browser, then <html lang>; caches disabled — managed manually below
       order: ['querystring', 'navigator', 'htmlTag'],
       caches: [],
     },

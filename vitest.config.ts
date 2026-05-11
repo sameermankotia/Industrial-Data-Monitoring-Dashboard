@@ -12,7 +12,6 @@ export default defineConfig({
     },
   },
   test: {
-    // `describe`/`it`/`expect` available without imports, like Jest.
     globals: true,
     // jsdom gives us window/document so component tests can render.
     environment: 'jsdom',
@@ -25,8 +24,6 @@ export default defineConfig({
       reporter: ['text', 'html', 'lcov'],
       reportsDirectory: './coverage',
       include: ['src/**/*.{ts,tsx}'],
-      // App.tsx and main.tsx are pure wiring — covered by manual smoke,
-      // not unit tests. i18n config and .d.ts files have no logic to cover.
       exclude: [
         'src/main.tsx',
         'src/App.tsx',
@@ -34,7 +31,6 @@ export default defineConfig({
         'src/**/*.d.ts',
         'tests/unit/**',
       ],
-      // Spec asks for 70%+ — we sit closer to 90%.
       thresholds: {
         lines: 70,
         functions: 70,

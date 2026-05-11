@@ -1,14 +1,11 @@
-// Tests for the polling hook. We don't go anywhere near the network here —
-// the API service is fully mocked, and we use fake timers to fast-forward
-// through poll cycles without actually waiting.
+// API service fully mocked; fake timers fast-forward poll cycles without real waiting
 
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { Symbol, SymbolValue } from '@/types/api';
 
-// Mock the API service so the hook talks to fake methods. Each test
-// configures the mocks for whatever scenario it's checking.
+// each test configures these fakes here for its specific scenario.
 vi.mock('@/services/apiService', () => {
   return {
     apiService: {
@@ -34,8 +31,7 @@ const mocked = apiService as unknown as {
   setUnauthorizedHandler: ReturnType<typeof vi.fn>;
 };
 
-// Tiny fixture set — two symbols is enough to test the multi-symbol
-// behavior without the tests becoming hard to read.
+// two symbols is enough to cover multi-symbol behavior without cluttering tests.
 const sampleSymbols: Symbol[] = [
   { name: 'A', type: 'INS' },
   { name: 'B', type: 'INS' },
