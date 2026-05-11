@@ -59,15 +59,16 @@ const renderDashboard = (override?: Partial<React.ComponentProps<typeof SymbolsD
 describe('SymbolsDashboard', () => {
   it('renders all rows', () => {
     renderDashboard();
-    expect(screen.getByText('AnalogDeadband')).toBeInTheDocument();
-    expect(screen.getByText('SystemTimer')).toBeInTheDocument();
+    // Both the table row and the mobile card render the name, so getAllByText is used.
+    expect(screen.getAllByText('AnalogDeadband').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('SystemTimer').length).toBeGreaterThan(0);
   });
 
   it('filters by search term', async () => {
     const user = userEvent.setup();
     renderDashboard();
     await user.type(screen.getByPlaceholderText(/search symbols/i), 'comm');
-    expect(screen.getByText('CommTimeout')).toBeInTheDocument();
+    expect(screen.getAllByText('CommTimeout').length).toBeGreaterThan(0);
     expect(screen.queryByText('SystemTimer')).not.toBeInTheDocument();
   });
 
@@ -89,7 +90,8 @@ describe('SymbolsDashboard', () => {
     const user = userEvent.setup();
     const onSelectSymbol = vi.fn();
     renderDashboard({ onSelectSymbol });
-    await user.click(screen.getByText('AnalogDeadband'));
+    // Click the first occurrence (table row); the mobile card is the second.
+    await user.click(screen.getAllByText('AnalogDeadband')[0]!);
     expect(onSelectSymbol).toHaveBeenCalledWith('AnalogDeadband');
   });
 
@@ -97,7 +99,8 @@ describe('SymbolsDashboard', () => {
     const user = userEvent.setup();
     renderDashboard();
     await user.type(screen.getByPlaceholderText(/search symbols/i), 'zzzzzzz');
-    expect(screen.getByText(/no symbols match/i)).toBeInTheDocument();
+    // Both the table and the mobile card list show the empty message.
+    expect(screen.getAllByText(/no symbols match/i).length).toBeGreaterThan(0);
   });
 
   it('toggles polling button label based on isPolling prop', () => {

@@ -1,4 +1,10 @@
 {
+  "stats": {
+    "total": "Total",
+    "active": "Activos",
+    "stale": "Obsoletos",
+    "inactive": "Inactivos"
+  },
   "header": {
     "user": "Usuario: {{username}}",
     "server": "Servidor: {{server}}"

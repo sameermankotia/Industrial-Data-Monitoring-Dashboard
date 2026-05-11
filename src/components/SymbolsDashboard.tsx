@@ -33,6 +33,7 @@ function formatElapsed(ms: number): string {
 const PAGE_SIZE_OPTIONS = [10, 25, 50];
 const INTERVAL_OPTIONS = [1000, 2000, 5000, 10_000];
 
+
 interface Row {
   symbol: Symbol;
   value: SymbolValue | undefined;
@@ -163,11 +164,10 @@ export default function SymbolsDashboard({
 
   return (
     <section className={styles.wrap}>
+      {/* Search + polling controls */}
       <div className={styles.controls}>
         <div className={styles.searchWrap}>
-          <span className={styles.searchIcon} aria-hidden="true">
-            ⌕
-          </span>
+          <i className={`bi bi-search ${styles.searchIcon}`} aria-hidden="true" />
           <input
             type="search"
             className={`field-input ${styles.search}`}
@@ -199,9 +199,10 @@ export default function SymbolsDashboard({
             onClick={onTogglePolling}
             disabled={loading}
           >
-            <span className={styles.pollIcon} aria-hidden="true">
-              {isPolling ? '■' : '▶'}
-            </span>
+            <i
+              className={`bi ${isPolling ? 'bi-stop-fill' : 'bi-play-fill'} ${styles.pollIcon}`}
+              aria-hidden="true"
+            />
             {isPolling ? t('dashboard:controls.stopPolling') : t('dashboard:controls.startPolling')}
           </button>
 
@@ -229,6 +230,7 @@ export default function SymbolsDashboard({
         </div>
       </div>
 
+      {/* Table — visible on tablet and wider */}
       <div className={`card ${styles.tableWrap}`}>
         <table className={styles.table} role="table">
           <colgroup>
@@ -255,7 +257,7 @@ export default function SymbolsDashboard({
                 ariaTooltip={t('dashboard:table.sortBy', { column: t('dashboard:table.value') })}
               />
               <th scope="col">{t('dashboard:table.timestamp')}</th>
-              <th scope="col">{t('dashboard:table.lastUpdated')}</th>
+              <th scope="col" className={styles.colHideTablet}>{t('dashboard:table.lastUpdated')}</th>
               <th scope="col">{t('dashboard:table.status')}</th>
             </tr>
           </thead>
@@ -294,7 +296,7 @@ export default function SymbolsDashboard({
                     : '—'}
                 </td>
                 <td>{formatTimestamp(row.value?.t, lng)}</td>
-                <td>
+                <td className={styles.colHideTablet}>
                   {row.value && row.value.lastUpdated.getTime() > 0
                     ? formatRelativeTime(row.value.lastUpdated, t)
                     : t('status.neverUpdated')}
@@ -308,6 +310,41 @@ export default function SymbolsDashboard({
             ))}
           </tbody>
         </table>
+      </div>
+
+      {/* Mobile card list — replaces the table on small screens */}
+      <div className={styles.cardList} aria-label="Symbol list">
+        {loading && symbols.length === 0 && (
+          <div className={styles.cardEmpty}>{t('dashboard:table.loading')}</div>
+        )}
+        {!loading && pageRows.length === 0 && (
+          <div className={styles.cardEmpty}>{t('dashboard:table.empty')}</div>
+        )}
+        {pageRows.map((row) => (
+          <button
+            key={row.symbol.name}
+            type="button"
+            className={styles.symbolCard}
+            onClick={() => onSelectSymbol(row.symbol.name)}
+          >
+            <div className={styles.cardHeader}>
+              <span className={styles.cardName}>{row.symbol.name}</span>
+              <span className={STATUS_PILL[row.status]}>{t(`status.${row.status}`)}</span>
+            </div>
+            <div className={styles.cardBody}>
+              <span className={styles.cardValue}>
+                {row.value && row.value.lastUpdated.getTime() > 0
+                  ? formatNumber(row.value.stVal, lng)
+                  : '—'}
+              </span>
+              <span className={styles.cardMeta}>
+                {row.value && row.value.lastUpdated.getTime() > 0
+                  ? formatRelativeTime(row.value.lastUpdated, t)
+                  : t('status.neverUpdated')}
+              </span>
+            </div>
+          </button>
+        ))}
       </div>
 
       <div className={styles.footer}>
@@ -338,7 +375,7 @@ export default function SymbolsDashboard({
             onClick={() => setPage((p) => Math.max(1, p - 1))}
             aria-label={t('dashboard:pagination.previous')}
           >
-            ←
+            <i className="bi bi-chevron-left" aria-hidden="true" />
           </button>
           <span className={styles.pageLabel}>
             <input
@@ -374,10 +411,16 @@ export default function SymbolsDashboard({
             onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
             aria-label={t('dashboard:pagination.next')}
           >
-            →
+            <i className="bi bi-chevron-right" aria-hidden="true" />
           </button>
 
-          <button type="button" className="btn" onClick={handleExport} disabled={sorted.length === 0}>
+          <button
+            type="button"
+            className="btn"
+            onClick={handleExport}
+            disabled={sorted.length === 0}
+          >
+            <i className="bi bi-download" aria-hidden="true" />
             {t('actions.exportCsv')}
           </button>
         </div>

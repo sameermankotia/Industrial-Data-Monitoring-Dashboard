@@ -54,9 +54,7 @@ export default function UserMenu({
         aria-expanded={open}
         onClick={() => setOpen((o) => !o)}
       >
-        <span className={styles.gear} aria-hidden="true">
-          ⚙
-        </span>
+        <i className={`bi bi-gear-fill ${styles.gear}`} aria-hidden="true" />
         <span>{t('actions.settings')}</span>
       </button>
 

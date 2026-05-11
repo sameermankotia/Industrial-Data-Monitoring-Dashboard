@@ -33,8 +33,9 @@
   top: 50%;
   transform: translateY(-50%);
   color: var(--text-muted);
-  font-size: 14px;
+  font-size: 13px;
   pointer-events: none;
+  line-height: 1;
 }
 
 .pollGroup {
@@ -92,9 +93,10 @@
 }
 
 .pollIcon {
-  font-size: 10px;
+  font-size: 13px;
   display: inline-flex;
   align-items: center;
+  line-height: 1;
 }
 
 .intervalSegment {
@@ -341,6 +343,90 @@
   margin: 0;
 }
 
+/* ── Mobile card list ────────────────────────────────────── */
+
+/* Hidden on tablet and wider; the table takes over there */
+.cardList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+@media (min-width: 768px) {
+  .cardList {
+    display: none;
+  }
+}
+
+.cardEmpty {
+  text-align: center;
+  padding: 32px 16px;
+  color: var(--text-muted);
+  font-style: italic;
+  font-size: 13px;
+}
+
+.symbolCard {
+  width: 100%;
+  text-align: left;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  padding: 12px 14px;
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  transition: background 100ms ease, border-color 100ms ease;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.symbolCard:hover,
+.symbolCard:focus-visible {
+  background: var(--bg-row-hover);
+  border-color: var(--border-default);
+  outline: none;
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.cardName {
+  font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cardBody {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.cardValue {
+  font-size: 26px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-primary);
+  line-height: 1;
+}
+
+.cardMeta {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* ── Responsive breakpoints ──────────────────────────────── */
+
 @media (max-width: 1024px) {
   .table {
     font-size: 13px;
@@ -362,6 +448,20 @@
   }
 }
 
+/* Table is hidden on mobile; the card list replaces it */
+@media (max-width: 767px) {
+  .tableWrap {
+    display: none;
+  }
+}
+
+/* Hide "Last updated" column on mid-range tablets to prevent squishing */
+@media (min-width: 768px) and (max-width: 900px) {
+  .colHideTablet {
+    display: none;
+  }
+}
+
 @media (max-width: 768px) {
   .footer {
     flex-direction: column;
@@ -371,9 +471,5 @@
   .pagination {
     justify-content: space-between;
     flex-wrap: wrap;
-  }
-  .table thead th,
-  .table tbody td {
-    padding: 10px 12px;
   }
 }

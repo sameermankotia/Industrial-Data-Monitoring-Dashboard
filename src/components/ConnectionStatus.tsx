@@ -67,9 +67,7 @@ export default function ConnectionStatus({
             onClick={onRefresh}
             disabled={loading}
           >
-            <span className={styles.icon} aria-hidden="true">
-              ⟳
-            </span>
+            <i className="bi bi-arrow-clockwise" aria-hidden="true" />
             {t('actions.refresh')}
           </button>
           <button
@@ -77,6 +75,7 @@ export default function ConnectionStatus({
             className={`btn btn-danger-outline ${styles.actionBtn}`}
             onClick={onLogout}
           >
+            <i className="bi bi-box-arrow-right" aria-hidden="true" />
             {t('actions.logout')}
           </button>
         </div>

@@ -9,3 +9,14 @@ services:
     restart: unless-stopped
     environment:
       - NODE_ENV=production
+
+  demo:
+    build:
+      context: .
+      dockerfile: Dockerfile.demo
+    image: industrial-dashboard-demo:latest
+    container_name: industrial-dashboard-demo
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
