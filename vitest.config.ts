@@ -16,7 +16,8 @@ export default defineConfig({
     globals: true,
     // jsdom gives us window/document so component tests can render.
     environment: 'jsdom',
-    setupFiles: ['./src/tests/setup.ts'],
+    include: ['tests/unit/**/*.{test,spec}.{ts,tsx}'],
+    setupFiles: ['./tests/unit/setup.ts'],
     // Allow CSS modules to be imported by components without throwing.
     css: true,
     coverage: {
@@ -31,8 +32,7 @@ export default defineConfig({
         'src/App.tsx',
         'src/i18n/**',
         'src/**/*.d.ts',
-        'src/tests/**',
-        'src/**/*.test.{ts,tsx}',
+        'tests/unit/**',
       ],
       // Spec asks for 70%+ — we sit closer to 90%.
       thresholds: {
