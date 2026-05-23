@@ -14,13 +14,16 @@ beforeEach(async () => {
 const renderForm = (props: Partial<React.ComponentProps<typeof AuthenticationForm>> = {}) => {
   const onSubmit = props.onSubmit ?? vi.fn().mockResolvedValue(true);
   const onDismissError = props.onDismissError ?? vi.fn();
+  const onLoginSuccess = props.onLoginSuccess ?? vi.fn();
   return {
     onSubmit,
     onDismissError,
+    onLoginSuccess,
     ...render(
       <I18nextProvider i18n={i18n}>
         <AuthenticationForm
           onSubmit={onSubmit}
+          onLoginSuccess={onLoginSuccess}
           loading={props.loading ?? false}
           error={props.error ?? null}
           onDismissError={onDismissError}
