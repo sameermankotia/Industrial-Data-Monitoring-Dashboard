@@ -16,6 +16,7 @@ import {
   SymbolHistoryPoint,
   SymbolValue,
 } from '@/types/api';
+import { s } from 'node_modules/vite/dist/node/types.d-aGj9QkWt';
 
 const DEFAULT_INTERVAL = 2000;
 const VALID_INTERVALS = [1000, 2000, 5000, 10_000];
@@ -104,6 +105,7 @@ export function useSymbolPolling(): UseSymbolPollingResult {
       inFlightRef.current = null;
     }
     isPollingRef.current = false;
+    setSymbolHistory (new Map());
     setPollingState((s) => ({ ...s, isPolling: false }));
   }, []);
 
@@ -181,19 +183,32 @@ export function useSymbolPolling(): UseSymbolPollingResult {
 
   // swaps the interval live without stopping/starting polling
   const setPollingInterval = useCallback(
-    (ms: number) => {
-      const interval = clampInterval(ms);
-      storageService.setNumber('polling-interval', interval);
-      setPollingState((s) => ({ ...s, interval }));
-      if (isPollingRef.current) {
-        if (intervalIdRef.current) clearInterval(intervalIdRef.current);
-        intervalIdRef.current = setInterval(() => {
-          void fetchOnce();
-        }, interval);
+  (ms: number) => {
+    const interval = clampInterval(ms);
+    storageService.setNumber('polling-interval', interval);
+    setPollingState((s) => ({ ...s, interval }));
+    if (isPollingRef.current) {
+
+      if(intervalIdRef.current){
+        clearInterval(intervalIdRef.current);
       }
-    },
-    [fetchOnce],
-  );
+    }
+
+    intervalIdRef.current = setInterval(() => {
+      void fetchOnce();
+    } ,interval);
+  
+  },
+  [fetchOnce],
+);
+
+
+
+
+
+
+
+
 
   // fetches symbol list once; called on login and manual refresh
   const loadSymbols = useCallback(async () => {

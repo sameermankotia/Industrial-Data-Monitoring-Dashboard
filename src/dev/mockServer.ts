@@ -47,7 +47,7 @@ const SYMBOLS: SymbolDef[] = [
   { name: 'ReclosureCount', type: 'INS', description: 'Reclosure operations', units: '', base: 12, amplitude: 1, state: 12 },
   { name: 'OilTemperature', type: 'INS', description: 'Transformer oil temperature', units: '°C', base: 65, amplitude: 4, state: 65, behavior: 'flaky', cycleOffsetMs: 30_000 },
   { name: 'WindingTemperature', type: 'INS', description: 'Winding hot-spot temperature', units: '°C', base: 78, amplitude: 5, state: 78, behavior: 'flaky', cycleOffsetMs: 60_000 },
-  { name: 'AmbientTemperature', type: 'INS', description: 'Cabinet ambient temperature', units: '°C', base: 24, amplitude: 3, state: 24 },
+  { name: 'AmbientTemperature', type: 'INS', description: 'Cabinet ambient temperature', units: '°C', base: 24, amplitude: 35, state: 50 },
   { name: 'CoolingFanSpeed', type: 'INS', description: 'Cooling fan RPM', units: 'rpm', base: 1200, amplitude: 80, state: 1200 },
   { name: 'PressureSensor', type: 'INS', description: 'Hydraulic pressure', units: 'kPa', base: 3450, amplitude: 90, state: 3450 },
   { name: 'TankLevel', type: 'INS', description: 'Tank level (%)', units: '%', base: 78, amplitude: 4, state: 78 },

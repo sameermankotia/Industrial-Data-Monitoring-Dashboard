@@ -20,6 +20,48 @@ import styles from './css/DetailChart.module.css';
 // Must be called once before any <Line> renders.
 ChartJS.register(CategoryScale, LinearScale, LineElement, PointElement, Tooltip, Title, Filler);
 
+interface ThresholdConfig {
+  minThreshold: number;
+  maxThreshold: number;
+  minLabel: string;
+  maxLabel: string;
+}
+
+
+const THRESHOLD_MAP: Record<string, ThresholdConfig > = {
+  'AmbientTemperature : {
+    minThreshold: 32,
+    maxThreshold: 80,
+    minLabel : 'Min Safe temp (32)',
+    maxLabel : 'Max safe Temperature (80)'
+},
+
+const getColorForValue =(Value: number , threshold: ThresholdConfig): string => {
+  if (value < threshold.minThreshold){
+    return '#2196F3';
+  }else if (value > threshold.maxThreshold) {
+    return '#ecf321';
+  }else{
+    return '#f32125';
+  }
+}
+
+const isWithinSafeRange = (value: number, threshold: Thresholdconfig): boolean => {
+  return value >= threshold.minThreshold && value <= threshold.maxThreshold;
+};
+
+
+const getStatusText = (value: number, threshold: Thresholdconfig): string => {
+  if (value < threshold.minThreshold){
+    return 'Below minimum (${threshold.minThreshold})';
+  }else if (value > threshold.maxThreshold) {
+    return 'Above maximum (${threshold.maxThreshold})';
+  }else{
+    return 'safe Range';
+  }
+};
+
+
 interface Props {
   symbolName: string;
   history: SymbolHistory | undefined;
@@ -29,8 +71,50 @@ interface Props {
 export default function DetailChart({ symbolName, history, lng }: Props) {
   const { t } = useTranslation('dashboard');
 
+  const threshold = THRESHOLD_MAP[symbolName] || {
+    minThreshold:0,
+    maxThreshold: 100,
+    minLabel: 'Minimum threshold',
+    maxLabel: 'Maximum threshold'
+  };
+
+
+
+
+
+
+
   const chartData = useMemo(() => {
     const points = history?.dataPoints ?? [];
+    
+    if (points.length === 0) {
+      return{
+        labels: [],
+        datasets : [
+          {
+            label:symbolName,
+            data:[],
+            borderColor: '#f32125',
+            backgroundColor: 'rbga(25, 118, 210. 0.2)'
+            fill: true,
+            tension:0.4,
+            pointRadius: 4,
+            pointHoverRadius: 6,
+            pointBorderwidth :2,
+          }
+        ]  
+      }
+    };
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     return {
       labels: points.map((p) => p.formattedTime),
       datasets: [
@@ -49,9 +133,35 @@ export default function DetailChart({ symbolName, history, lng }: Props) {
     };
   }, [history, symbolName]);
 
+
+
+
+      segment: {
+        bordercolor:(Ctx: nay) => {
+          const value = Ctx.p1DataIndex !== undefined ? points[Ctx.p1DataIndex]?.value:0;
+          return getColorForValue(value, threshold);
+        }
+      },
+
+      pointBackgroundColor: (ctx: any) => {
+        const value = points[ctx.dataIndex]?.value;
+        return getColorForValue(value, threshold);
+      },
+
+      pointRadius:4,
+      pointHoverRadius: 6,
+      pointBorderWidth: 2,
+
+    }
+  ]
+
+
+      }, [history, symbolName, threshold]
+
+
   const chartOptions = {
     responsive: true,
-    maintainAspectRatio: false,
+    maintainAspectRatio: true,
     animation: { duration: 200 },
     interaction: { mode: 'index' as const, intersect: false },
     plugins: {
@@ -91,4 +201,6 @@ export default function DetailChart({ symbolName, history, lng }: Props) {
       </div>
     </section>
   );
-}
+
+
+ 
