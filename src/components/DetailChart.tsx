@@ -17,7 +17,6 @@ import type { SymbolHistory } from '@/types/api';
 import { formatNumber } from '@/utils/formatters';
 import styles from './css/DetailChart.module.css';
 
-// Must be called once before any <Line> renders.
 ChartJS.register(CategoryScale, LinearScale, LineElement, PointElement, Tooltip, Title, Filler);
 
 interface ThresholdConfig {
@@ -27,40 +26,27 @@ interface ThresholdConfig {
   maxLabel: string;
 }
 
+const THRESHOLD_MAP: Record<string, ThresholdConfig> = {
+  AmbientTemperature: {
+    minThreshold: 5,
+    maxThreshold: 45,
+    minLabel: 'Min safe ambient (5 °C)',
+    maxLabel: 'Max safe ambient (45 °C)',
+  },
+};
 
-const THRESHOLD_MAP: Record<string, ThresholdConfig > = {
-  'AmbientTemperature : {
-    minThreshold: 32,
-    maxThreshold: 80,
-    minLabel : 'Min Safe temp (32)',
-    maxLabel : 'Max safe Temperature (80)'
-},
+const DEFAULT_THRESHOLD: ThresholdConfig = {
+  minThreshold: 0,
+  maxThreshold: 100,
+  minLabel: 'Minimum threshold',
+  maxLabel: 'Maximum threshold',
+};
 
-const getColorForValue =(Value: number , threshold: ThresholdConfig): string => {
-  if (value < threshold.minThreshold){
-    return '#2196F3';
-  }else if (value > threshold.maxThreshold) {
-    return '#ecf321';
-  }else{
-    return '#f32125';
-  }
+function colorForValue(value: number, cfg: ThresholdConfig): string {
+  if (value < cfg.minThreshold) return '#2196F3';
+  if (value > cfg.maxThreshold) return '#C8102E';
+  return '#27AE60';
 }
-
-const isWithinSafeRange = (value: number, threshold: Thresholdconfig): boolean => {
-  return value >= threshold.minThreshold && value <= threshold.maxThreshold;
-};
-
-
-const getStatusText = (value: number, threshold: Thresholdconfig): string => {
-  if (value < threshold.minThreshold){
-    return 'Below minimum (${threshold.minThreshold})';
-  }else if (value > threshold.maxThreshold) {
-    return 'Above maximum (${threshold.maxThreshold})';
-  }else{
-    return 'safe Range';
-  }
-};
-
 
 interface Props {
   symbolName: string;
@@ -70,51 +56,11 @@ interface Props {
 
 export default function DetailChart({ symbolName, history, lng }: Props) {
   const { t } = useTranslation('dashboard');
-
-  const threshold = THRESHOLD_MAP[symbolName] || {
-    minThreshold:0,
-    maxThreshold: 100,
-    minLabel: 'Minimum threshold',
-    maxLabel: 'Maximum threshold'
-  };
-
-
-
-
-
-
+  const threshold = THRESHOLD_MAP[symbolName] ?? DEFAULT_THRESHOLD;
 
   const chartData = useMemo(() => {
     const points = history?.dataPoints ?? [];
-    
-    if (points.length === 0) {
-      return{
-        labels: [],
-        datasets : [
-          {
-            label:symbolName,
-            data:[],
-            borderColor: '#f32125',
-            backgroundColor: 'rbga(25, 118, 210. 0.2)'
-            fill: true,
-            tension:0.4,
-            pointRadius: 4,
-            pointHoverRadius: 6,
-            pointBorderwidth :2,
-          }
-        ]  
-      }
-    };
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+
     return {
       labels: points.map((p) => p.formattedTime),
       datasets: [
@@ -122,44 +68,33 @@ export default function DetailChart({ symbolName, history, lng }: Props) {
           label: symbolName,
           data: points.map((p) => p.value),
           borderColor: '#00A3E0',
-          backgroundColor: 'rgba(0, 163, 224, 0.12)',
+          backgroundColor: 'rgba(0, 163, 224, 0.10)',
           borderWidth: 2,
           fill: true,
           tension: 0.32,
-          pointRadius: 0, 
-          pointHoverRadius: 4,
+          segment: {
+            borderColor: (ctx: any) => {
+              const v = points[ctx.p1DataIndex]?.value;
+              return v != null ? colorForValue(v, threshold) : '#00A3E0';
+            },
+          },
+
+          pointBackgroundColor: (ctx: any) => {
+            const v = points[ctx.dataIndex]?.value;
+            return v != null ? colorForValue(v, threshold) : '#00A3E0';
+          },
+          pointBorderColor: (ctx: any) => {
+            const v = points[ctx.dataIndex]?.value;
+            return v != null ? colorForValue(v, threshold) : '#00A3E0';
+          },
+          pointRadius: 3,
+          pointHoverRadius: 5,
         },
       ],
     };
-  }, [history, symbolName]);
+  }, [history, symbolName, threshold]);
 
-
-
-
-      segment: {
-        bordercolor:(Ctx: nay) => {
-          const value = Ctx.p1DataIndex !== undefined ? points[Ctx.p1DataIndex]?.value:0;
-          return getColorForValue(value, threshold);
-        }
-      },
-
-      pointBackgroundColor: (ctx: any) => {
-        const value = points[ctx.dataIndex]?.value;
-        return getColorForValue(value, threshold);
-      },
-
-      pointRadius:4,
-      pointHoverRadius: 6,
-      pointBorderWidth: 2,
-
-    }
-  ]
-
-
-      }, [history, symbolName, threshold]
-
-
-  const chartOptions = {
+  const chartOptions = useMemo(() => ({
     responsive: true,
     maintainAspectRatio: true,
     animation: { duration: 200 },
@@ -174,6 +109,13 @@ export default function DetailChart({ symbolName, history, lng }: Props) {
         callbacks: {
           label: (ctx: TooltipItem<'line'>) =>
             formatNumber(ctx.parsed.y ?? undefined, lng),
+          afterLabel: (ctx: TooltipItem<'line'>) => {
+            const v = ctx.parsed.y;
+            if (v == null) return '';
+            if (v < threshold.minThreshold) return `↓ ${threshold.minLabel}`;
+            if (v > threshold.maxThreshold) return `↑ ${threshold.maxLabel}`;
+            return '';
+          },
         },
       },
     },
@@ -187,7 +129,7 @@ export default function DetailChart({ symbolName, history, lng }: Props) {
         ticks: { color: 'rgba(122, 136, 150, 0.9)' },
       },
     },
-  };
+  }), [threshold, lng]);
 
   return (
     <section className={styles.chartCard}>
@@ -199,8 +141,20 @@ export default function DetailChart({ symbolName, history, lng }: Props) {
           <Line data={chartData} options={chartOptions} />
         )}
       </div>
+      <div className={styles.thresholdLegend}>
+        <span className={styles.legendItem}>
+          <span className={styles.dot} style={{ background: '#2196F3' }} />
+          {threshold.minLabel}
+        </span>
+        <span className={styles.legendItem}>
+          <span className={styles.dot} style={{ background: '#27AE60' }} />
+          {t('common:normal')}
+        </span>
+        <span className={styles.legendItem}>
+          <span className={styles.dot} style={{ background: '#C8102E' }} />
+          {threshold.maxLabel}
+        </span>
+      </div>
     </section>
   );
-
-
- 
+}

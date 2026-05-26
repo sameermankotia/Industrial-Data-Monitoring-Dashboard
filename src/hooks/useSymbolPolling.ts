@@ -16,7 +16,6 @@ import {
   SymbolHistoryPoint,
   SymbolValue,
 } from '@/types/api';
-import { s } from 'node_modules/vite/dist/node/types.d-aGj9QkWt';
 
 const DEFAULT_INTERVAL = 2000;
 const VALID_INTERVALS = [1000, 2000, 5000, 10_000];
